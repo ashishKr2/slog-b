@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const config = require('../config/database');
+const config = require('./database');
 module.exports=(mongo)=>{
     mongoose.connect(config.db, { useNewUrlParser: true });
     mongoose.set('useCreateIndex', true);

@@ -1,4 +1,4 @@
 module.exports={
-    'db':'mongodb://localhost:27017/slog',
-    'secret':'ashish'
+    'db':process.env.DB,
+    'secret':process.env.SECRET
 }

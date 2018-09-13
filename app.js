@@ -1,13 +1,15 @@
+require('dotenv').config();
+const port = process.env.PORT || 3000;
 const express = require('express'),
     bodyParser = require('body-parser'),
-    app=express();
-const mongoose = require('mongoose');   
+    app = express();
+const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
 const passport = require('passport');
-const port = process.env.PORT || 3000;
-const path = require('path');
 
+const path = require('path');
+const config = require('./config/database');
 require('./config/passport')(passport);
 require('./config/mongo')(mongoose);
 app.use(bodyParser.json());
@@ -18,7 +20,7 @@ app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 
-require("./routes")(app,passport);
+require("./routes")(app, passport);
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
