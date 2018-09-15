@@ -2,6 +2,7 @@ const User = require('../schema/userSchema');
 const bcrypt = require('bcryptjs');
 
 module.exports = {
+   
     getUserById: (id, cb) => {
         User.findById(id, cb);
     },

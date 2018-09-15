@@ -2,6 +2,7 @@ const jwt=require('jsonwebtoken');
 var User=require('../models/user');
 const config=require('../config/database');
 const userschema=require('../schema/userSchema');
+const verifier = require('email-verify');
 var token;
 
 module.exports = {
@@ -23,11 +24,26 @@ module.exports = {
             else {
                 User.createUser(newUser, function (err, user) {
                     if (err) {
-                         res.status(400).json({ success: false, message: 'user is not registered' });
+                         res.status(400).json({ success: false, message: 'user already registered with same email' });
                    
                     }
                     else {
-                         res.status(201).json({ success: true, message: 'user success' });
+                        
+                            verifier.verify(newUser.email, function( err, info ){
+                                if( info.success )  {
+                                    console.log( "Success (T/F): " + info.success );
+                                    console.log( "Info: " + info.info );
+                                    res.status(200).json({success:true,message:'SignUp Successful'})
+                                   
+                                }     
+                                else{
+                                    res.status(400).json({success:false,message:'Email not valid'})
+                                    console.log( "Success (T/F): " + info.success );
+                                    console.log( "Info: " + info.info );
+                                }
+                              });
+                       
+                        
                        
                     }
                 });

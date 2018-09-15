@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport');
-const user = require('../controller/user')
-
+const user = require('../controller/user');
 module.exports = (passportapp) => {
     router.post('/signup', user.signup);
     router.post('/login', user.login);
@@ -13,6 +12,7 @@ module.exports = (passportapp) => {
         res.redirect('/');
 
     });
+   
     return router;
 
 }
