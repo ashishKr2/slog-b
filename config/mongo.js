@@ -16,7 +16,7 @@ module.exports=(mongo)=>{
     mongoose.Promise = global.Promise;
    
     nev.configure({
-        verificationURL: 'http://localhost:4200/email-verification/${URL}',
+        verificationURL: 'http://localhost:4200/${URL}',
         persistentUserModel: User,
         tempUserCollection: 'myawesomewebsite_tempusers',
      

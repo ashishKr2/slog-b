@@ -1,50 +1,81 @@
-const jwt=require('jsonwebtoken');
-var User=require('../models/user');
-const config=require('../config/database');
-const userschema=require('../schema/userSchema');
+const jwt = require('jsonwebtoken');
+var User = require('../models/user');
+const config = require('../config/database');
+const userschema = require('../schema/userSchema');
 const verifier = require('email-verify');
+const nodemailer = require('nodemailer');
 var token;
 
 module.exports = {
     signup: (req, res) => {
         var newUser = new userschema({
             username: req.body.username,
-            email: req.body.email,           
+            email: req.body.email,
             password: req.body.password,
         });
-        var un = new userschema({
-            username: req.body.username,
-        });
-        User.getByUsern(un.username, function (err, user) {
+      
+        User.getByUsern(newUser.username, function (err, user) {
             if (err) throw err;
             if (user) {
-                 return res.status(501).json({ success: false, message: 'Choose another username' });
-               
+                return res.status(501).json({ success: false, message: 'Choose another username' });
+
             }
             else {
                 User.createUser(newUser, function (err, user) {
                     if (err) {
-                         res.status(400).json({ success: false, message: 'user already registered with same email' });
-                   
+                        res.status(400).json({ success: false, message: 'user already registered with same email' });
+
                     }
                     else {
-                        
-                            verifier.verify(newUser.email, function( err, info ){
-                                if( info.success )  {
-                                    console.log( "Success (T/F): " + info.success );
-                                    console.log( "Info: " + info.info );
-                                    res.status(200).json({success:true,message:'SignUp Successful'})
-                                   
-                                }     
-                                else{
-                                    res.status(400).json({success:false,message:'Email not valid'})
-                                    console.log( "Success (T/F): " + info.success );
-                                    console.log( "Info: " + info.info );
-                                }
-                              });
-                       
-                        
-                       
+                            //email varification for valid email
+                        verifier.verify(newUser.email, function (err, info) {
+                            if (info.success) {
+                                token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 600000 });
+                                console.log("Success (T/F): " + info.success);
+                                console.log("Info: " + info.info);
+                                res.status(200).json({ success: true, message: 'SignUp Successful ' });
+                              // end of email varification
+                              
+                                //node mailer
+                               nodemailer.createTestAccount((err, account) => {
+                                // create reusable transporter object using the default SMTP transport
+                                let transporter = nodemailer.createTransport({
+                                    service: 'Gmail',
+                                    auth: {
+                                        user: config.gmail, 
+                                        pass: config.password 
+                                    }
+                                });
+                            
+                                // setup email data with unicode symbols
+                                let mailOptions = {
+                                    from: '"Slog 👻" <ashish@ashish.com>', // sender address
+                                    to: newUser.email,
+                                    subject: 'Hello User ✔', // Subject line
+                                    text: `Click to verify`, // plain text body
+                                    html: `<b>Click to verify</b> <a href="" (click)="verify()"> ${token}</a>` // html body
+                                };
+                            
+                                // send mail with defined transport object
+                                transporter.sendMail(mailOptions, (error, info) => {
+                                    if (error) {
+                                        return console.log(error);
+                                    }
+                                    console.log('Message sent: %s', info.messageId);
+                                    
+                                });
+                            });
+                               //end of node mailer
+                            }
+                            else {
+                                res.status(400).json({ success: false, message: 'Email not valid' })
+                                console.log("Success (T/F): " + info.success);
+                                console.log("Info: " + info.info);                              
+                            }
+                        });
+
+
+
                     }
                 });
             }
@@ -60,7 +91,7 @@ module.exports = {
             if (err) throw err;
             if (!user) {
                 //return res.json({ success: false, message: 'no user found' });
-                 return res.sendStatus(404);
+                return res.sendStatus(404);
             }
             User.comparePassword(password, user.password, function (err, isMatch) {
                 if (err) throw err;
