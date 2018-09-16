@@ -13,7 +13,10 @@ module.exports = {
             email: req.body.email,
             password: req.body.password,
         });
-      
+        var newToken= new userschema({
+            tokenV :req.body.tokenVerify
+        });
+
         User.getByUsern(newUser.username, function (err, user) {
             if (err) throw err;
             if (user) {
@@ -27,61 +30,80 @@ module.exports = {
 
                     }
                     else {
-                            //email varification for valid email
+                        //email varification for valid email
                         verifier.verify(newUser.email, function (err, info) {
                             if (info.success) {
                                 token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 600000 });
+                                newToken.tokenV=token;
+                                console.log(".......././././/////",newToken.tokenV);
                                 console.log("Success (T/F): " + info.success);
                                 console.log("Info: " + info.info);
-                                res.status(200).json({ success: true, message: 'SignUp Successful ' });
-                              // end of email varification
-                              
+                                res.status(200).json({ success: true, message: 'SignUp Successful '+token });
+                                // end of email varification
+
                                 //node mailer
-                               nodemailer.createTestAccount((err, account) => {
-                                // create reusable transporter object using the default SMTP transport
-                                let transporter = nodemailer.createTransport({
-                                    service: 'Gmail',
-                                    auth: {
-                                        user: config.gmail, 
-                                        pass: config.password 
-                                    }
+                                nodemailer.createTestAccount((err, account) => {
+                                    // create reusable transporter object using the default SMTP transport
+                                    let transporter = nodemailer.createTransport({
+                                        service: 'Gmail',
+                                        auth: {
+                                            user: config.gmail,
+                                            pass: config.password
+                                        }
+                                    });
+
+                                    // setup email data with unicode symbols
+                                    let mailOptions = {
+                                        from: '"Slog 👻" <ashish@ashish.com>', // sender address
+                                        to: newUser.email,
+                                        subject: 'Hello User ✔', // Subject line
+                                        text: `Click to verify`, // plain text body
+                                        html: ` <b>Welcome To Slog</b> ........... <hr></hr><br>
+                                    <b>This is one time verification link :</b> <a href="http://localhost:3000/verification/${token}" 
+                                    (click)="revert()">
+                                     Click this link to verify</a>
+                                    </br><hr>
+                                    <b>Or</b> copy and paste below link to verify your account :
+                                    <br>
+                                    http://localhost:3000/verification/${token}
+                                    `
+                                    };
+
+                                    // send mail with defined transport object
+                                    transporter.sendMail(mailOptions, (error, info) => {
+                                        if (error) {
+                                            return console.log(error);
+                                        }
+                                        console.log('Message sent: %s', info.messageId);
+
+                                    });
                                 });
-                            
-                                // setup email data with unicode symbols
-                                let mailOptions = {
-                                    from: '"Slog 👻" <ashish@ashish.com>', // sender address
-                                    to: newUser.email,
-                                    subject: 'Hello User ✔', // Subject line
-                                    text: `Click to verify`, // plain text body
-                                    html: `<b>Click to verify</b> <a href="" (click)="verify()"> ${token}</a>` // html body
-                                };
-                            
-                                // send mail with defined transport object
-                                transporter.sendMail(mailOptions, (error, info) => {
-                                    if (error) {
-                                        return console.log(error);
-                                    }
-                                    console.log('Message sent: %s', info.messageId);
-                                    
-                                });
-                            });
-                               //end of node mailer
+                                //end of node mailer
                             }
                             else {
                                 res.status(400).json({ success: false, message: 'Email not valid' })
-                                console.log("Success (T/F): " + info.success);
-                                console.log("Info: " + info.info);                              
+                                
                             }
                         });
-
-
-
                     }
                 });
             }
         })
 
 
+    },
+    verify: async (req, res) => {
+        var gen_token=req.params.token;
+        // var token1=req.body.tokenVerify
+                if(gen_token==token){
+                    console.log("./././....token-matched");
+                    res.sendStatus(200);
+                }
+                else{
+                    console.log("./././....token-not-matched");
+                    res.sendStatus(404);
+                }
+         
     },
     login: (req, res) => {
         var email = req.body.email;
@@ -95,6 +117,10 @@ module.exports = {
             }
             User.comparePassword(password, user.password, function (err, isMatch) {
                 if (err) throw err;
+                // if(!isMatch){
+                //     return res.sendStatus(401);
+                // }
+                // if()
                 if (isMatch) {
                     token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 600000 });
                     res.json({
