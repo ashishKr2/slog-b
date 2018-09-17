@@ -5,6 +5,7 @@ const userschema = require('../schema/userSchema');
 const verifier = require('email-verify');
 const nodemailer = require('nodemailer');
 var token;
+var userName;
 
 module.exports = {
     signup: (req, res) => {
@@ -12,9 +13,7 @@ module.exports = {
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
-        });
-        var newToken= new userschema({
-            tokenV :req.body.tokenVerify
+            tokenVerify: req.body.tokenVerify
         });
 
         User.getByUsern(newUser.username, function (err, user) {
@@ -30,15 +29,12 @@ module.exports = {
 
                     }
                     else {
-                        //email varification for valid email
+                        userName = newUser.username;//set global username to pass in as verified email message                        
                         verifier.verify(newUser.email, function (err, info) {
                             if (info.success) {
-                                token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 600000 });
-                                newToken.tokenV=token;
-                                console.log(".......././././/////",newToken.tokenV);
                                 console.log("Success (T/F): " + info.success);
                                 console.log("Info: " + info.info);
-                                res.status(200).json({ success: true, message: 'SignUp Successful '+token });
+                                res.status(200).json({ success: true, message: 'SignUp Successful ' });
                                 // end of email varification
 
                                 //node mailer
@@ -59,13 +55,13 @@ module.exports = {
                                         subject: 'Hello User ✔', // Subject line
                                         text: `Click to verify`, // plain text body
                                         html: ` <b>Welcome To Slog</b> ........... <hr></hr><br>
-                                    <b>This is one time verification link :</b> <a href="http://localhost:3000/verification/${token}" 
+                                    <b>This is one time verification link :</b> <a href="http://localhost:3000/verification/${newUser.tokenVerify}" 
                                     (click)="revert()">
                                      Click this link to verify</a>
                                     </br><hr>
                                     <b>Or</b> copy and paste below link to verify your account :
                                     <br>
-                                    http://localhost:3000/verification/${token}
+                                    http://localhost:3000/verification/${newUser.tokenVerify}
                                     `
                                     };
 
@@ -82,7 +78,7 @@ module.exports = {
                             }
                             else {
                                 res.status(400).json({ success: false, message: 'Email not valid' })
-                                
+
                             }
                         });
                     }
@@ -93,17 +89,17 @@ module.exports = {
 
     },
     verify: async (req, res) => {
-        var gen_token=req.params.token;
-        // var token1=req.body.tokenVerify
-                if(gen_token==token){
-                    console.log("./././....token-matched");
-                    res.sendStatus(200);
-                }
-                else{
-                    console.log("./././....token-not-matched");
-                    res.sendStatus(404);
-                }
-         
+        var gen_token = req.params.token;
+        User.getToken(gen_token, function (err, TV) {
+            if (err) throw err;
+            if (TV) {
+                res.status(200).send('Welcome ' + userName + '. You have been Successfully Verified as a Slog User');
+            }
+            else {
+                res.sendStatus(404);
+            }
+        })
+
     },
     login: (req, res) => {
         var email = req.body.email;
@@ -117,10 +113,6 @@ module.exports = {
             }
             User.comparePassword(password, user.password, function (err, isMatch) {
                 if (err) throw err;
-                // if(!isMatch){
-                //     return res.sendStatus(401);
-                // }
-                // if()
                 if (isMatch) {
                     token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 600000 });
                     res.json({
