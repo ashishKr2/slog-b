@@ -14,9 +14,13 @@ var userSchema=new mongoose.Schema({
         required:true,
         type:String
     },
-    tokenVerify:{
+    tokenHash:{
         type:String,
         required:true
+    },
+    activateLogin:{
+        type:Boolean,
+        default:false
     }
 });
 var User=module.exports=mongoose.model('User',userSchema);

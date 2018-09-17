@@ -5,15 +5,13 @@ const userschema = require('../schema/userSchema');
 const verifier = require('email-verify');
 const nodemailer = require('nodemailer');
 var token;
-var userName;
-
 module.exports = {
     signup: (req, res) => {
         var newUser = new userschema({
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
-            tokenVerify: req.body.tokenVerify
+            tokenHash: req.body.tokenHash,
         });
 
         User.getByUsern(newUser.username, function (err, user) {
@@ -29,7 +27,6 @@ module.exports = {
 
                     }
                     else {
-                        userName = newUser.username;//set global username to pass in as verified email message                        
                         verifier.verify(newUser.email, function (err, info) {
                             if (info.success) {
                                 console.log("Success (T/F): " + info.success);
@@ -52,16 +49,16 @@ module.exports = {
                                     let mailOptions = {
                                         from: '"Slog 👻" <ashish@ashish.com>', // sender address
                                         to: newUser.email,
-                                        subject: 'Hello User ✔', // Subject line
+                                        subject: 'Hello User ', // Subject line
                                         text: `Click to verify`, // plain text body
                                         html: ` <b>Welcome To Slog</b> ........... <hr></hr><br>
-                                    <b>This is one time verification link :</b> <a href="http://localhost:3000/verification/${newUser.tokenVerify}" 
+                                    <b>This is one time verification link :</b> <a href="http://localhost:3000/verification/${newUser.tokenHash}" 
                                     (click)="revert()">
                                      Click this link to verify</a>
                                     </br><hr>
                                     <b>Or</b> copy and paste below link to verify your account :
                                     <br>
-                                    http://localhost:3000/verification/${newUser.tokenVerify}
+                                    http://localhost:3000/verification/${newUser.tokenHash}
                                     `
                                     };
 
@@ -90,10 +87,19 @@ module.exports = {
     },
     verify: async (req, res) => {
         var gen_token = req.params.token;
-        User.getToken(gen_token, function (err, TV) {
+        User.getToken(gen_token, function (err, TokenVerified) {
             if (err) throw err;
-            if (TV) {
-                res.status(200).send('Welcome ' + userName + '. You have been Successfully Verified as a Slog User');
+            if (TokenVerified) {
+                var usern = gen_token.substr(64);
+                User.getByUsern(usern, (err, user) => {
+                    if (err) throw err;
+                    if (user) {
+                        user.activateLogin = true;
+                        user.save();
+                    }
+
+                });
+                res.status(200).send('Welcome...... You have been Successfully Verified as a Slog User');
             }
             else {
                 res.sendStatus(404);
@@ -111,24 +117,31 @@ module.exports = {
                 //return res.json({ success: false, message: 'no user found' });
                 return res.sendStatus(404);
             }
-            User.comparePassword(password, user.password, function (err, isMatch) {
-                if (err) throw err;
-                if (isMatch) {
-                    token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 600000 });
-                    res.json({
-                        success: true, token: 'JWT ' + token,
-                        user: {
-                            id: user._id,
-                            username: user.username,
-                            email: user.email,
-                            password: user.password,
-                        }
-                    });
-                } else {
-                    //return res.json({ success: false, message: 'password not match' });
-                    return res.sendStatus(401);
-                }
-            });
+            if (user.activateLogin) {
+                User.comparePassword(password, user.password, function (err, isMatch) {
+                    if (err) throw err;
+                    if (isMatch) {
+                        token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 600000 });
+                        res.json({
+                            success: true, token: 'JWT ' + token,
+                            user: {
+                                id: user._id,
+                                username: user.username,
+                                email: user.email,
+                                password: user.password,
+                            }
+                        });
+                    } else {
+                        //return res.json({ success: false, message: 'password not match' });
+                        return res.sendStatus(401);
+                    }
+                });
+            } else {
+                res.status(400).send('Verify Email First..!!');
+            }
+
         });
+
+
     }
 }

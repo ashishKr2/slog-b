@@ -1,6 +1,5 @@
 const User = require('../schema/userSchema');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const Crypto = require('crypto');
 module.exports = {
 
@@ -18,7 +17,7 @@ module.exports = {
             //password with incrypted hash value
             bcrypt.hash(newUser.password, salt, function (err, hash) {
                 if (err) throw err;
-                newUser.tokenVerify = Crypto.randomBytes(32).toString('hex');
+                newUser.tokenHash = Crypto.randomBytes(32).toString('hex') + newUser.username;
                 newUser.password = hash;
                 newUser.save(cb);
             })
@@ -33,7 +32,8 @@ module.exports = {
     saveToken: function (newToken, cb) {
         newToken.save(cb);
     },
-    getToken: (tokenVerify, cb) => {
-        User.findOne({ tokenVerify: tokenVerify }, cb);
-    }
+    getToken: (tokenHash, cb) => {
+        User.findOne({ tokenHash: tokenHash }, cb);
+    },
+
 }
