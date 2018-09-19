@@ -23,7 +23,7 @@ module.exports = {
             else {
                 User.createUser(newUser, function (err, user) {
                     if (err) {
-                        res.status(400).json({ success: false, message: 'user already registered with same email' });
+                        res.status(409).json({ success: false, message: 'User already registered with same email' });
 
                     }
                     else {
@@ -74,7 +74,7 @@ module.exports = {
                                 //end of node mailer
                             }
                             else {
-                                res.status(400).json({ success: false, message: 'Email not valid' })
+                          res.status(401).json({ success: false, message: 'Email not valid' })
 
                             }
                         });
