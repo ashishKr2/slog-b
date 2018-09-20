@@ -1,22 +1,19 @@
 var mongoose =require('mongoose');
 var userSchema=new mongoose.Schema({
     username:{
-        required:true,
-        type:String,
-        unique:true
+        type:String
     },
     email:{
-        required:true,
-        type:String,
-        unique:true
+        type:String
     },
     password:{
-        required:true,
         type:String
     },
     tokenHash:{
         type:String,
-        required:true
+    },
+    resetTokenHash:{
+        type:String,
     },
     activateLogin:{
         type:Boolean,

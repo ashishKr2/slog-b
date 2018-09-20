@@ -52,13 +52,13 @@ module.exports = {
                                         subject: 'Hello User ', // Subject line
                                         text: `Click to verify`, // plain text body
                                         html: ` <b>Welcome To Slog</b> ........... <hr></hr><br>
-                                    <b>This is one time verification link :</b> <a href="http://localhost:3000/verification/${newUser.tokenHash}" 
+                                    <b>This is one time verification link :</b> <a href="${req.headers.origin }/verification/${newUser.tokenHash}" 
                                     (click)="revert()">
                                      Click this link to verify</a>
                                     </br><hr>
                                     <b>Or</b> copy and paste below link to verify your account :
                                     <br>
-                                    http://localhost:3000/verification/${newUser.tokenHash}
+                                    ${req.headers.origin }/verification/${newUser.tokenHash}
                                     `
                                     };
 
@@ -112,7 +112,7 @@ module.exports = {
                         });
                     } else {
                         //return res.json({ success: false, message: 'password not match' });
-                        return res.sendStatus(401);
+                        return res.status(401).json({success:false,message:'password not matched'});
                     }
                 });
             } else {

@@ -23,6 +23,13 @@ module.exports = {
             })
         })
     },
+   
+    resetPassToken: (newUser, cb) => {
+
+        newUser.resetTokenHash = Crypto.randomBytes(32).toString('hex') + newUser.email;
+        newUser.save(cb);
+
+    },
     comparePassword: (myPassword, hash, cb) => {
         bcrypt.compare(myPassword, hash, function (err, isMatch) {
             if (err) throw err;
