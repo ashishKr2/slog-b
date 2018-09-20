@@ -50,7 +50,8 @@ module.exports = {
                             // send mail with defined transport object
                             transporter.sendMail(mailOptions, (error, info) => {
                                 if (error) {
-                                    return console.log(error);
+                                    console.log(error);
+                                    res.status(400).json({ success: false, message: 'Mail not sent' });
                                     
                                 }
                                 console.log('Message sent: %s', info.messageId);

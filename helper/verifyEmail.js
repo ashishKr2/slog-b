@@ -1,6 +1,7 @@
 var User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const userschema = require('../schema/userSchema');
+const resetSchema=require('../schema/resetPass');
 module.exports = {
 
     verify: async (req, res) => {
@@ -9,10 +10,12 @@ module.exports = {
             if (err) throw err;
             if (TokenVerified) {
                 var usern = gen_token.substr(64);
+
                 User.getByUsern(usern, (err, user) => {
                     if (err) throw err;
                     if (user) {
                         user.activateLogin = true;
+
                         user.save();
                     }
 
@@ -26,7 +29,7 @@ module.exports = {
 
     },
     resetPass: (req, res) => {
-        var reset = new userschema({
+        var reset = new resetSchema({
             email: req.body.email,
             password: req.body.password
         })
@@ -40,13 +43,13 @@ module.exports = {
                         if (err) throw err;
                         user.password = hash;
                         user.save();
-                        res.status(200).json({success:true, message:"Password reset successfull"})
+                        res.status(200).json({ success: true, message: "Password reset successfull" })
                     })
                 })
-                          
+
             }
-            else{
-                res.status(400).json({success:false, message:"Password cant be reset"})
+            else {
+                res.status(400).json({ success: false, message: "Password cant be reset" })
             }
         })
 
