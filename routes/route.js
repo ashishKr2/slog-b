@@ -7,7 +7,7 @@ module.exports = (passportapp) => {
     router.post('/signup', user.signup);
     router.post('/login', user.login);
     router.post('/forgetPassword',resetPass.resetPass);
-    router.get('/verification/:token',verifyEmail.verify);
+    router.post('/verification',verifyEmail.verify);
     router.put('/resetPassword',verifyEmail.resetPass);
     router.get('/profile', passport.authenticate('jwt', { session: false }), function (req, res, next) {
         res.json({ user: req.user });

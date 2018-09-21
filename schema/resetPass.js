@@ -1,10 +1,13 @@
 var mongoose =require('mongoose');
 var resetSchema=new mongoose.Schema({
    
-    email:{
+    username:{
         type:String
     },
     password:{
+        type:String
+    },
+    resetTokenHash:{
         type:String
     }
    
