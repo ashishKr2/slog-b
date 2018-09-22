@@ -9,6 +9,7 @@ module.exports = {
     signup: (req, res) => {
         var newUser = new userschema({
             username: req.body.username,
+            name:req.body.name,
             email: req.body.email,
             password: req.body.password,
             tokenHash: req.body.tokenHash,
@@ -24,6 +25,7 @@ module.exports = {
                 User.getUserByEmail(newUser.email,(err,user)=>{
                     if(err) throw err;
                     if(user){
+                        console.log(user);
                         return res.status(501).json({ success: false, message: 'Choose another email' });
                     }
                     else{
@@ -51,7 +53,6 @@ module.exports = {
                                                     pass: config.password
                                                 }
                                             });
-        
                                             // setup email data with unicode symbols
                                             let mailOptions = {
                                                 from: '"Slog 👻" <ashish@ashish.com>', // sender address
