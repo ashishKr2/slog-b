@@ -3,6 +3,7 @@ const passport = require('passport');
 const user = require('../controller/user');
 const verifyEmail=require('../helper/verifyEmail');
 const resetPass=require('../controller/resetPassword');
+const project=require('../controller/postProject');
 module.exports = (passportapp) => {
     router.post('/signup', user.signup);
     router.post('/login', user.login);
@@ -17,7 +18,7 @@ module.exports = (passportapp) => {
         res.redirect('/');
 
     });
-   
+   router.post('/postProject',project.postProject);
     return router;
 
 }

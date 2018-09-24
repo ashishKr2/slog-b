@@ -5,8 +5,8 @@ const postProjectSchema=new mongoose.Schema({
     },
     projectDetail:String,
     paymentMode:String,
-    inr:String,
     projectSize:String,
-    skills:String
+    skills:String,
+    username:String
 });
 var postProject=module.exports=mongoose.model('PostProject',postProjectSchema);
