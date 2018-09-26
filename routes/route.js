@@ -4,6 +4,7 @@ const user = require('../controller/user');
 const verifyEmail=require('../helper/verifyEmail');
 const resetPass=require('../controller/resetPassword');
 const project=require('../controller/postProject');
+const browseJob=require('../controller/browseJob');
 module.exports = (passportapp) => {
     router.post('/signup', user.signup);
     router.post('/login', user.login);
@@ -19,6 +20,9 @@ module.exports = (passportapp) => {
 
     });
    router.post('/postProject',project.postProject);
+   router.post('/browseJob',browseJob.browseJob);
+   router.post('/bid',project.bid);
+   router.post('/bids',project.bids);
     return router;
 
 }
