@@ -23,6 +23,7 @@ module.exports = (passportapp) => {
    router.post('/browseJob',browseJob.browseJob);
    router.post('/bid',project.bid);
    router.post('/bids',project.bids);
+   router.post('/myProject',browseJob.myProject);
     return router;
 
 }
