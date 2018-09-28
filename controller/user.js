@@ -73,7 +73,6 @@ module.exports = {
                                             // send mail with defined transport object
                                             transporter.sendMail(mailOptions, (error, info) => {
                                                 if (error) {
-                                                    console.log(error);
                                                     res.status(400).json({ success: false, message: 'Email not sent' })
                                                 }
                                                 else {
