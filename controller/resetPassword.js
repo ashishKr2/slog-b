@@ -47,7 +47,7 @@ module.exports = {
                             res.status(400).json({ success: false, message: 'Mail not sent' });
 
                         }
-                        console.log('Message sent: %s', info.messageId);
+                        
                         res.status(200).json({ success: true, message: 'Resest password mail sent' });
 
                     });

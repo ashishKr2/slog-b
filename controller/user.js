@@ -9,7 +9,7 @@ module.exports = {
     signup: (req, res) => {
         var newUser = new userschema({
             username: req.body.username,
-            name:req.body.name,
+            name: req.body.name,
             email: req.body.email,
             password: req.body.password,
             tokenHash: req.body.tokenHash,
@@ -22,18 +22,18 @@ module.exports = {
 
             }
             else {
-                User.getUserByEmail(newUser.email,(err,user)=>{
-                    if(err) throw err;
-                    if(user){
+                User.getUserByEmail(newUser.email, (err, user) => {
+                    if (err) throw err;
+                    if (user) {
                         console.log(user);
                         return res.status(501).json({ success: false, message: 'Choose another email' });
                     }
-                    else{
+                    else {
 
                         User.createUser(newUser, function (err, user) {
                             if (err) {
                                 res.status(409).json({ success: false, message: 'Something wrong' });
-        
+
                             }
                             else {
                                 verifier.verify(newUser.email, function (err, info) {
@@ -42,7 +42,7 @@ module.exports = {
                                         console.log("Info: " + info.info);
                                         res.status(200).json({ success: true, message: 'SignUp Successful ' });
                                         // end of email varification
-        
+
                                         //node mailer
                                         nodemailer.createTestAccount((err, account) => {
                                             // create reusable transporter object using the default SMTP transport
@@ -69,21 +69,24 @@ module.exports = {
                                             ${req.headers.origin}/verification/${newUser.tokenHash}
                                             `
                                             };
-        
+
                                             // send mail with defined transport object
                                             transporter.sendMail(mailOptions, (error, info) => {
                                                 if (error) {
-                                                    return console.log(error);
+                                                    res.status(400).json({ success: false, message: 'Email not sent' })
                                                 }
-                                                console.log('Message sent: %s', info.messageId);
-        
+                                                else {
+                                                    res.status(200).json({ success: true, message: 'Email sent' })
+                                                }
+
+
                                             });
                                         });
                                         //end of node mailer
                                     }
                                     else {
-                                  res.status(401).json({ success: false, message: 'Email not valid' })
-        
+                                        res.status(401).json({ success: false, message: 'Email not valid' })
+
                                     }
                                 });
                             }
@@ -96,7 +99,7 @@ module.exports = {
 
 
     },
-   
+
     login: (req, res) => {
         var email = req.body.email;
         var password = req.body.password;
@@ -123,7 +126,7 @@ module.exports = {
                         });
                     } else {
                         //return res.json({ success: false, message: 'password not match' });
-                         res.status(401).send('Password not matched');
+                        res.status(401).send('Password not matched');
                     }
                 });
             } else {
