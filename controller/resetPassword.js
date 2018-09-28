@@ -47,9 +47,11 @@ module.exports = {
                             res.status(400).json({ success: false, message: 'Mail not sent' });
 
                         }
-                        
-                        res.status(200).json({ success: true, message: 'Resest password mail sent' });
+                        else{
+                            res.status(200).json({ success: true, message: 'Resest password mail sent' });
 
+                        }
+                        
                     });
                 });
                 //end of node mailer
