@@ -2030,25 +2030,25 @@ var AuthServices = /** @class */ (function () {
         return new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json; charset=utf-8' });
     };
     AuthServices.prototype.signup = function (user) {
-        return this.http.post('/signup', user, { headers: this.header() });
+        return this.http.post('signup', user, { headers: this.header() });
     };
     AuthServices.prototype.login = function (user) {
-        return this.http.post('/login', user, { headers: this.header() });
+        return this.http.post('login', user, { headers: this.header() });
     };
     AuthServices.prototype.forgetPassword = function (user) {
-        return this.http.post('/forgetPassword', user, { headers: this.header() });
+        return this.http.post('forgetPassword', user, { headers: this.header() });
     };
     AuthServices.prototype.resetPassword = function (password) {
-        return this.http.put('/resetPassword', password, { headers: this.header() });
+        return this.http.put('resetPassword', password, { headers: this.header() });
     };
     AuthServices.prototype.verifivationEmail = function (data) {
-        return this.http.post('/verification', data, { headers: this.header() });
+        return this.http.post('verification', data, { headers: this.header() });
     };
     AuthServices.prototype.getProfile = function () {
         var headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]();
         this.loadToken();
         headers = headers.append('Authorization', this.authToken);
-        return this.http.get('/profile', { headers: headers });
+        return this.http.get('profile', { headers: headers });
     };
     AuthServices.prototype.storeUserData = function (token, user) {
         localStorage.setItem('id_token', token);
@@ -2077,10 +2077,10 @@ var AuthServices = /** @class */ (function () {
         localStorage.clear();
     };
     AuthServices.prototype.postProject = function (project) {
-        return this.http.post('/postProject', project, { headers: this.header() });
+        return this.http.post('postProject', project, { headers: this.header() });
     };
     AuthServices.prototype.browseJob = function () {
-        return this.http.post('/browseJob', { headers: this.header() });
+        return this.http.post('browseJob', { headers: this.header() });
     };
     AuthServices = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
@@ -2199,13 +2199,13 @@ var ProjectService = /** @class */ (function () {
         return new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json; charset=utf-8' });
     };
     ProjectService.prototype.bid = function (project) {
-        return this.http.post('/bid', project, { headers: this.header() });
+        return this.http.post('bid', project, { headers: this.header() });
     };
     ProjectService.prototype.bids = function (email) {
-        return this.http.post('/bids', { email: email }, { headers: this.header() });
+        return this.http.post('bids', { email: email }, { headers: this.header() });
     };
     ProjectService.prototype.myproject = function (username) {
-        return this.http.post('/myProject', { username: username }, { headers: this.header() });
+        return this.http.post('myProject', { username: username }, { headers: this.header() });
     };
     ProjectService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({

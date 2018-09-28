@@ -18,7 +18,7 @@ app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 require("./routes")(app, passport);
-app.get('/*', (req, res) => {
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
