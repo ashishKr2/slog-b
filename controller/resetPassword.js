@@ -43,11 +43,12 @@ module.exports = {
                     // send mail with defined transport object
                     transporter.sendMail(mailOptions, (error, info) => {
                         if (error) {
-                            res.status(400).json({ success: false, message: 'Email not sent' })
+                            console.log(error);
+                            res.status(400).json({ success: false, message: 'Mail not sent' });
+
                         }
-                        else {
-                            res.status(200).json({ success: true, message: 'Email sent' })
-                        }
+                        
+                        res.status(200).json({ success: true, message: 'Resest password mail sent' });
 
                     });
                 });
