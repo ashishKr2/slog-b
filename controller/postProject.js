@@ -15,20 +15,23 @@ module.exports={
             project=await newProject.save();
             res.status(200).json({success:true,message:'Project posted'});
         }catch(err){
-            res.status(400).json({success:false,message:'Error occured'});
+            res.status(500).json({success:false,message:'Error occured'});
         }      
     },
     //saving id and email on bid click so i can get in current work with that user
     bid: async(req,res)=>{
         var myBid=await new bidSchema({
             id:req.body.id,
-            email:req.body.email
+            email:req.body.email,
+            project_bidder:req.body.project_bidder,
+            project_owner:req.body.project_owner
         });
         try{
+            console.log(myBid)
             bid=await myBid.save();
             res.status(200).json({success:true,message:'Project Bid'});
         }catch(err){
-            res.status(400).json({success:false,message:'Error occured'});
+            res.status(500).json({success:false,message:'Error occured'});
         }
     },
     //geting bided data to active/current work with loggedIn email and by compaing id
@@ -43,12 +46,34 @@ module.exports={
             // console.log(jobs);
             res.json(jobs);
         }else{
-            res.status(200).json({success:false,message:'Something Wrong'})
-        }
+            res.status(500).json({success:false,message:'Something Wrong'})
+        }            
         
-       
-        
-        
-        
+    },
+    //getting from inbox - active username to finding projwct owner name during bid
+    getProjectOwner:async(req,res)=>{
+        var project_bidder=req.body.project_bidder;
+        const pb= await bidSchema.find({project_bidder:project_bidder});
+        if(pb){
+            const po= pb.map(d=>d.project_owner);
+            const pos= await bidSchema.find({project_owner:po});
+            res.json(pos.map(pos=>pos.project_owner)); // returning project owner name 
+        }else{
+            res.status(500).json({success:false,message:'Something Wrong'})
+        } 
+    },
+
+    // getting bidder name and add to project-owner profile
+    getProjectBidder:async(req,res)=>{
+        var project_owner=req.body.project_owner;
+        const po= await bidSchema.find({project_owner:project_owner});
+        if(po){
+            const pb=po.map(d=>d.project_bidder);
+            const pbs=await bidSchema.find({project_bidder:pb});
+            res.json(pbs.map(pbs=>pbs.project_bidder));
+        }else{
+            res.status(500).json({success:false,message:'Something Wrong'})
+        } 
     }
+
 }

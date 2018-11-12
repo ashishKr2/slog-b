@@ -18,7 +18,7 @@ module.exports = {
                 });
                 res.status(200).json({ success: true, message: "Verified successfull" })
             } else {
-                res.sendStatus(404);
+                res.status(498).json({ success: false, message: "InValid Token" })
             }
         })
     },
@@ -44,11 +44,15 @@ module.exports = {
                             })
                         })
                     }
+                    else{
+                        res.status(498).json({ success: false, message: "Invalid Token" })
+
+                    }
                 })
 
             }//
             else {
-                res.status(400).json({ success: false, message: "Password cant be reset" })
+                res.status(404).json({ success: false, message: "User not exist" })
             }
         })
 

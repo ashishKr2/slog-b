@@ -3,6 +3,8 @@ const port = process.env.PORT || 8080;
 const express = require('express'),
     bodyParser = require('body-parser'),
     app = express();
+const http=require('http').Server(app);
+const io=require('socket.io')(http);
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -21,7 +23,16 @@ require("./routes")(app, passport);
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
-
-app.listen(port, function () {
+io.on('connection', function(socket){
+    console.log('a user connected');
+    socket.on('disconnect',function(){
+        console.log("user disconnected");
+    });
+    socket.on('message',(message)=>{
+        console.log("Message Received:"+message);
+        io.emit('message',{type:'new-message',text:message});
+    })
+  });
+http.listen(port, function () {
     console.log('server is running on port no ' + port);
 });

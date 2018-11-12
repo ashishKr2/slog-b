@@ -43,7 +43,7 @@ module.exports = {
                     // send mail with defined transport object
                     transporter.sendMail(mailOptions, (error, info) => {
                         if (error) {
-                            res.status(400).json({ success: false, message: 'Mail not sent' });
+                            res.status(500).json({ success: false, message: 'Mail not sent' });
 
                         }
                         else{
@@ -55,7 +55,7 @@ module.exports = {
                 });
                 //end of node mailer
             }else{
-                res.status(404).json({ success: false, message: 'Oops.. This email is not registered' });
+                res.status(400).json({ success: false, message: 'Oops.. This email is not registered' });
             }
         })
     }

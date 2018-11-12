@@ -73,7 +73,7 @@ module.exports = {
                                             // send mail with defined transport object
                                             transporter.sendMail(mailOptions, (error, info) => {
                                                 if (error) {
-                                                    res.status(400).json({ success: false, message: 'Email not sent' })
+                                                    res.status(500).json({ success: false, message: 'Email not sent' })
                                                 }
                                                 else {
                                                     res.status(200).json({ success: true, message: 'Email sent' })
@@ -85,7 +85,7 @@ module.exports = {
                                         //end of node mailer
                                     }
                                     else {
-                                        res.status(401).json({ success: false, message: 'Email not valid' })
+                                        res.status(400).json({ success: false, message: 'Email not valid' })
 
                                     }
                                 });
@@ -114,7 +114,7 @@ module.exports = {
                 User.comparePassword(password, user.password, function (err, isMatch) {
                     if (err) throw err;
                     if (isMatch) {
-                        token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 600000 });
+                        token = jwt.sign(user.toJSON(), config.secret, { expiresIn: 60000000 });
                         res.json({
                             success: true, token: 'JWT ' + token,
                             user: {
@@ -126,11 +126,11 @@ module.exports = {
                         });
                     } else {
                         //return res.json({ success: false, message: 'password not match' });
-                        res.status(401).send('Password not matched');
+                        res.status(498).send('Password not matched');
                     }
                 });
             } else {
-                res.status(400).send('Verify Email First..!!');
+                res.status(401).send('Verify Email First..!!');
             }
 
         });

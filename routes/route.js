@@ -5,6 +5,7 @@ const verifyEmail=require('../helper/verifyEmail');
 const resetPass=require('../controller/resetPassword');
 const project=require('../controller/postProject');
 const browseJob=require('../controller/browseJob');
+const chat=require('../controller/chat');
 module.exports = (passportapp) => {
     router.post('/signup', user.signup);
     router.post('/login', user.login);
@@ -24,6 +25,11 @@ module.exports = (passportapp) => {
    router.post('/bid',project.bid);
    router.post('/bids',project.bids);
    router.post('/myProject',browseJob.myProject);
+   router.post('/getProjectOwner',project.getProjectOwner);
+   router.post('/getProjectBidder',project.getProjectBidder);
+   router.post('/chat',chat.postMessage);
+   router.post('/getChat',chat.getmessage);
+   router.post('/keyword',browseJob.search);
     return router;
 
 }
